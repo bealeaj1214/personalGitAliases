@@ -1,0 +1,3 @@
+#!/bin/bash
+CURR_BRANCH=$(git status -b -s | awk ' /##/ {print $2 }')
+git branch -m ${CURR_BRANCH} archive/${CURR_BRANCH}
