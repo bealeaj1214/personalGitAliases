@@ -1,3 +1,11 @@
 #!/bin/bash
-CURR_BRANCH=$(git status -b -s | awk ' /##/ {print $2 }')
-git branch -m ${CURR_BRANCH} archive/${CURR_BRANCH}
+
+if [ $# -gt 0 ] ; then
+    BRANCH=$1 &&\
+    git rev-parse --verfiy $BRANCH >/dev/null 2>1 || exit 1
+else
+    BRANCH=$(git status -b -s |awk '/##/ {print $2}')
+fi
+
+git branch -m ${BRANCH} archive/${BRANCH}
+
