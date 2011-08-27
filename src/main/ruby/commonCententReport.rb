@@ -33,7 +33,7 @@ end
 def identify_common_commits(branch_alpha, branch_beta)
   command = "git cherry #{branch_alpha}  #{branch_beta} | awk ' $1~/-/ { print $2} '"
 
-  cmd_result =%x[#{command}]
+  cmd_result = %x[#{command}]
 
   unless ($?.to_i == 0) 
     puts "error:"
@@ -46,10 +46,33 @@ def identify_common_commits(branch_alpha, branch_beta)
 
 end
 
+def processCommits(commits)
+  commits.each { |commit|
+    command = " git show #{commit} | git patch-id "
+    cmd_result = %x[#{command}]
+
+    if ($?.to_i == 0)
+      parts=cmd_result.split
+      if (parts.length == 2) 
+        puts " patch SHA1: #{parts[0]}  commit SHA1 : #{parts[1]} "
+      end
+    end
+  }
+end
+
+class CommonContentReport
+  def initialize(branch_alpha, branch_beta)
+    @branch1 =branch_alpha
+    @branch2 =branch_beta
+    @common_patches = Hash.new([])
+  end
+
+end
 
 if $0 == __FILE__
   check_usage
   check_branches(ARGV[0], ARGV[1])
-  identify_common_commits(ARGV[0], ARGV[1])
+  test =identify_common_commits(ARGV[0], ARGV[1])
+  processCommits(test)
 end
 
