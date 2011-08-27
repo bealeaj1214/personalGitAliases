@@ -33,7 +33,17 @@ end
 def identify_common_commits(branch_alpha, branch_beta)
   command = "git cherry #{branch_alpha}  #{branch_beta} | awk ' $1~/-/ { print $2} '"
 
-  puts "#{command}"
+  cmd_result =%x[#{command}]
+
+  unless ($?.to_i == 0) 
+    puts "error:"
+    exit
+  end
+
+  common_commits = cmd_result.split
+
+  return common_commits
+
 end
 
 
